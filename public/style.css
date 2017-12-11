@@ -1,0 +1,166 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f5f5f5;
+  font-family: courier;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+}
+
+.container {
+  background-color: #fff;
+  box-shadow: 2px 2px #aaa;
+  margin: 20px auto;
+  max-width: 800px;
+  padding: 4px;
+}
+
+h2, h3 {
+  color: #666;
+  font-weight: normal;
+  margin: 5px;
+  text-align: center;
+}
+
+@media screen and (max-width: 800px) {
+  .container {
+    margin: 5px;
+  }
+
+  label {
+    text-align: center;
+  }
+}
+
+input, button {
+  border: none;
+  font-family: courier;
+  font-size: 15px;
+  padding: 4px;
+  margin: 4px;
+}
+
+label {
+  margin: 0 4px;
+}
+
+input[type="text"] {
+  border-bottom: 1.5px solid #ccc;
+}
+
+input[type="submit"], button {
+  background-color: #cfc;
+  box-shadow: 2px 2px #aaa;
+}
+
+input[type="submit"]:focus, input[type="submit"]:focus, button:focus,
+input[type="submit"]:active, input[type="submit"]:active, button:active,
+input[type="submit"]:hover, input[type="submit"]:hover, button:hover {
+  background-color: #afa;
+}
+
+button.not-ready {
+  background-color: #fcc;
+}
+
+button.not-ready:focus,
+button.not-ready:active,
+button.not-ready:hover {
+  background-color: #faa;
+}
+
+input:focus, button:focus {
+  outline: none;
+  border-bottom-color: #aaf;
+}
+
+.hidden {
+  display: none;
+}
+
+.centered {
+  text-align: center;
+}
+
+.lobby-user {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 2px;
+  position: relative;
+}
+
+.user-ready {
+  height: 20px;
+  transition: all 1s;
+}
+
+.not-ready .user-ready {
+  animation: spinny 1s infinite ease-in-out;
+}
+
+@keyframes spinny {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.hint {
+  color: #aaa;
+  display: block;
+  text-align: center;
+}
+
+.user-field {
+  box-shadow: 2px 2px #aaa;
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
+}
+
+.user-field select {
+  background-color: #f5f5f5;
+  border: none;
+  font-family: courier;
+  font-size: 15px;
+  padding: 4px;
+  position: relative;
+  position: sticky;
+  top: 0;
+}
+
+.question-pair {
+  border-bottom: 1px solid #eee;
+  margin: 4px;
+}
+
+.question-pair .answer {
+  font-style: italic;
+}
+
+.score {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 50px;
+  text-align: center;
+}
+
+.score .top {
+  min-width: 100px;
+  border-bottom: 2px solid #999;
+}
