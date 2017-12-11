@@ -6,7 +6,7 @@ const escape = require('html-escape');
 const _ = require('lodash');
 
 const PORT = 3000;
-const GAME_TIMEOUT = 1000;
+const GAME_TIMEOUT = 3000;
 
 app.use(express.static('public'));
 app.get('/', (req, res) => {
@@ -59,7 +59,7 @@ function startGamePhase2() {
       answers: _.shuffle(answers),
     });
   });
-  
+
   gameActive = false;
 }
 
