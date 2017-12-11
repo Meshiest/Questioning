@@ -103,6 +103,9 @@ input:focus, button:focus {
 }
 
 .not-ready .user-ready {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: spinny 1s infinite ease-in-out;
 }
 
