@@ -23,6 +23,11 @@ function lobbyEmit() {
     u => ({name: u.name, ready: u.ready})));
 }
 
+function scoreEmit() {
+  io.emit('scoreboard', _.map(_.filter(_.values(userPool), u => u.name),
+    u => ({name: u.name, score: u.score})));
+}
+
 function startGame() {
   gameActive = true;
 
@@ -82,9 +87,15 @@ io.on('connection', socket => {
     if(gameActive)
       return;
 
+    if(user.name.length > 140 || user.question.length > 140) {
+      socket.emit('reset');
+      return;
+    }
+
     user.name = escape(name);
     user.question = escape(question);
     user.ready = false;
+    user.score = false;
     user.answers = [];
     clearTimeout(readyTimeout);
 
@@ -133,8 +144,10 @@ io.on('connection', socket => {
       if(answerMap[guess] == id)
         correct++;
     });
+    user.score = [correct, total];
 
     socket.emit('score', correct, total);
+    scoreEmit();
   });
 
   socket.on('disconnect', () => {
@@ -144,6 +157,7 @@ io.on('connection', socket => {
       _.each(userPool, u => {
         u.ready = false
         u.name = '';
+        u.question = '';
       });
       lobbyEmit();
       io.emit('reset');

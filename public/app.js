@@ -65,6 +65,7 @@ function reset() {
   $('#lobbyView').className = 'container hidden';
   $('#answerForm').className = 'container hidden';
   $('#answerView').className = 'container hidden';
+  $('#scoreboardView').className = 'container hidden';
   $('#questionForm').className = 'container';
   $('#scoreView').className = 'container hidden';
   $('#readyButton').className = '';
@@ -90,6 +91,7 @@ window.addEventListener('load', () => {
     $('#answerForm').className = 'container hidden';
     $('#answerView').className = 'container hidden';
     $('#questionForm').className = 'container hidden';
+    $('#scoreboardView').className = 'container';
     $('#scoreView').className = 'container';
 
     $('#scoreCorrect').innerHTML = correct;
@@ -101,6 +103,7 @@ window.addEventListener('load', () => {
   socket.on('answers', ({names, answers}) => {
     $('#lobbyView').className = 'container hidden';
     $('#answerForm').className = 'container hidden';
+    $('#scoreboardView').className = 'container hidden';
     $('#answerView').className = 'container';
     $('#numUsers').value = answers.length;
 
@@ -145,6 +148,7 @@ window.addEventListener('load', () => {
   // each player receives the questions shuffled
   socket.on('questions', questions => {
     $('#questionForm').className = 'container hidden';
+    $('#scoreboardView').className = 'container hidden';
     $('#lobbyView').className = 'container';
     $('#readyButton').className = 'hidden';
     $('#answerForm').className = 'container';
@@ -187,6 +191,28 @@ window.addEventListener('load', () => {
       list.appendChild(div);
     });
   });
+
+  // Called everytime someone finishes answering
+  socket.on('scoreboard', users => {
+    let list = $('#scoreList');
+
+    while(list.hasChildNodes())
+      list.removeChild(list.lastChild);
+
+    users.forEach(({name, score}) => {
+      let div = document.createElement('div');
+      div.className = 'lobby-user ' + (score ? 'ready' : 'not-ready');
+      div.innerHTML = `
+        <div class="user-name">
+          ${name}
+        </div>
+        <div class="user-ready">
+          ${score ? score.join('/') : '&#x29D6;'}
+        </div>`;
+      list.appendChild(div);
+    });
+  });
+
 });
 
 window.addEventListener('unload', () => {
