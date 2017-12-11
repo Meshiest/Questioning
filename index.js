@@ -140,8 +140,11 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     delete userPool[id];
     io.emit('user-count', Object.keys(userPool).length);
-    if(gameActive) {    
-      _.each(userPool, u => u.ready = false);
+    if(gameActive) { 
+      _.each(userPool, u => {
+        u.ready = false
+        u.name = '';
+      });
       lobbyEmit();
       io.emit('reset');
       gameActive = false;

@@ -68,6 +68,7 @@ function reset() {
   $('#questionForm').className = 'container';
   $('#scoreView').className = 'container hidden';
   $('#readyButton').className = '';
+  $('#questionInput').value = '';
   toggleReady();
   if(isReady)
     toggleReady();
@@ -160,7 +161,7 @@ window.addEventListener('load', () => {
         <div class="input-container">
           <label for="answer_${i}">${question}</label>
           <input type="hidden" name="question_${i}" value="${btoa(question)}">
-          <input type="text" name="answer_${i}" id="answer_${i}" placeholder="Answer" required>
+          <input type="text" autocomplete="off" name="answer_${i}" id="answer_${i}" placeholder="Answer" required>
         </div>`;
       list.appendChild(div);
     });
