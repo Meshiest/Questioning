@@ -32,7 +32,7 @@ function scoreEmit() {
         return 0;
       if(a.score && b.score)
         return b.score[0] - a.score[0];
-      return !a ? 01 : 1;
+      return !a ? -1 : 1;
     })
   );
 }
@@ -60,7 +60,8 @@ function startGamePhase2() {
   let names = [];
   _.each(answers, (u, i) => {
     names.push({name: u.name, id: u.id});
-    answerMap[i] = u.id;
+    if(u.name)
+      answerMap[i] = u.id;
     delete u.name;
     u.id = i;
   });
@@ -93,8 +94,10 @@ io.on('connection', socket => {
   io.emit('user-count', Object.keys(userPool).length);
 
   socket.on('init', ({name, question}) => {
-    if(gameActive)
+    if(gameActive) {
+      socket.emit('reset');
       return;
+    }
 
     if(user.name.length > 140 || user.question.length > 140) {
       socket.emit('reset');
@@ -112,8 +115,10 @@ io.on('connection', socket => {
   });
 
   socket.on('answers', answers => {
-    if(!gameActive)
+    if(!gameActive) {
+      socket.emit('reset');
       return;
+    }
 
     user.answers = _.map(answers, ({question, answer}) => ({
       answer: escape(answer),
@@ -132,8 +137,10 @@ io.on('connection', socket => {
   });
 
   socket.on('ready', ready => {
-    if(gameActive)
+    if(gameActive) {
+      socket.emit('reset');
       return;
+    }
     
     user.ready = !!ready;
     lobbyEmit();
