@@ -32,7 +32,7 @@ function scoreEmit() {
         return 0;
       if(a.score && b.score)
         return b.score[0] - a.score[0];
-      return !a ? 1 : -1;
+      return !a ? 01 : 1;
     })
   );
 }
