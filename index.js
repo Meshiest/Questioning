@@ -23,6 +23,11 @@ function lobbyEmit() {
     u => ({name: u.name, ready: u.ready})));
 }
 
+function inGameEmit(inGame) {
+  gameActive = inGame;
+  io.emit('game-active', inGame);
+}
+
 function scoreEmit() {
   io.emit('scoreboard',
     _.map(_.filter(_.values(userPool), u => u.name),
@@ -38,7 +43,7 @@ function scoreEmit() {
 }
 
 function startGame() {
-  gameActive = true;
+  inGameEmit(true);
 
   let questions = _.uniq(_.map(_.filter(userPool, u => u.name && u.question), u => u.question));
   _.each(userPool, user => {
@@ -75,7 +80,7 @@ function startGamePhase2() {
     });
   });
 
-  gameActive = false;
+  inGameEmit(false);
 }
 
 
@@ -92,6 +97,7 @@ io.on('connection', socket => {
   clearTimeout(readyTimeout);
 
   io.emit('user-count', Object.keys(userPool).length);
+  socket.emit('game-active', gameActive);
 
   socket.on('init', ({name, question}) => {
     if(gameActive) {
@@ -177,7 +183,7 @@ io.on('connection', socket => {
       });
       lobbyEmit();
       io.emit('reset');
-      gameActive = false;
+      inGameEmit(false);
     }
   })
 });

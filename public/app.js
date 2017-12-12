@@ -91,6 +91,11 @@ window.addEventListener('load', () => {
     $('#onlineCount').innerHTML = count;
   });
 
+  // Active game on the bottom
+  socket.on('game-active', active => {
+    $('#gameActive').innerHTML = active ? 'Active' : 'Not Started';
+  });
+
   // set the view to the default screen
   socket.on('reset', reset);
 
