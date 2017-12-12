@@ -68,7 +68,7 @@ function toggleReady(event, noEmit) {
     socket.emit('ready', isReady);
 }
 
-function reset() {
+function reset(message) {
   $('#lobbyView').className = 'container hidden';
   $('#answerForm').className = 'container hidden';
   $('#answerView').className = 'container hidden';
@@ -81,6 +81,9 @@ function reset() {
   toggleReady(0, 1);
   if(isReady)
     toggleReady(0, 1);
+
+  if(message)
+    alert(message);
 }
 
 window.addEventListener('load', () => {

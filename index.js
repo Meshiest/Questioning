@@ -37,7 +37,7 @@ function scoreEmit() {
         return 0;
       if(a.score && b.score)
         return b.score[0] - a.score[0];
-      return !a ? -1 : 1;
+      return !a ? 1 : -1;
     })
   );
 }
@@ -101,12 +101,12 @@ io.on('connection', socket => {
 
   socket.on('init', ({name, question}) => {
     if(gameActive) {
-      socket.emit('reset');
+      socket.emit('reset', 'There is an active game');
       return;
     }
 
     if(user.name.length > 140 || user.question.length > 140) {
-      socket.emit('reset');
+      socket.emit('reset', 'Name/Question too long');
       return;
     }
 
@@ -122,7 +122,7 @@ io.on('connection', socket => {
 
   socket.on('answers', answers => {
     if(!gameActive) {
-      socket.emit('reset');
+      socket.emit('reset', 'There is an active game');
       return;
     }
 
@@ -144,7 +144,7 @@ io.on('connection', socket => {
 
   socket.on('ready', ready => {
     if(gameActive) {
-      socket.emit('reset');
+      socket.emit('reset', 'There is an active game');
       return;
     }
     
@@ -175,14 +175,14 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     delete userPool[id];
     io.emit('user-count', Object.keys(userPool).length);
-    if(gameActive) { 
+    if(gameActive && user.name && user.question) { 
       _.each(userPool, u => {
         u.ready = false
         u.name = '';
         u.question = '';
       });
       lobbyEmit();
-      io.emit('reset');
+      io.emit('reset', user.name + ' left the game');
       inGameEmit(false);
     }
   })
