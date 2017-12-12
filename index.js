@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 let userPool = {};
 let ids = 0;
-let readyTimeout;
+let readyTimeout, gameTimeout;
 let gameActive = false;
 
 function lobbyEmit() {
@@ -28,11 +28,12 @@ function inGameEmit(inGame) {
   io.emit('game-active', inGame);
 }
 
-function scoreEmit() {
-  io.emit('scoreboard',
-    _.map(_.filter(_.values(userPool), u => u.name),
+function scoreEmit(socket) {
+  (socket || io).emit('scoreboard',
+    // Get all selectable users and names
+    _.map(_.filter(_.values(userPool), u => u.name && typeof answerMap[u.id] !== 'undefined'),
       u => ({name: u.name, score: u.score}))
-    .sort((a, b) => {
+    .sort((a, b) => { // Put desc scores above waiting
       if(!a.score && !b.score)
         return 0;
       if(a.score && b.score)
@@ -57,16 +58,20 @@ function startGame() {
 let answerMap = {};
 
 function startGamePhase2() {
+  _.each(userPool, u => u.ready = false);
+
   let answers = _.map(_.filter(userPool, u => u.name && u.question), ({answers, id, name}) => ({
     answers: _.sortBy(answers, ['question']), id, name
   }));
+
   answers = _.shuffle(answers);
   
   let names = [];
+  answerMap = {};
   _.each(answers, (u, i) => {
     names.push({name: u.name, id: u.id});
     if(u.name)
-      answerMap[i] = u.id;
+      answerMap[u.id] = i;
     delete u.name;
     u.id = i;
   });
@@ -98,15 +103,19 @@ io.on('connection', socket => {
 
   io.emit('user-count', Object.keys(userPool).length);
   socket.emit('game-active', gameActive);
+  if(gameActive)
+    scoreEmit(socket);
 
+
+  // User submits initial information for the game
   socket.on('init', ({name, question}) => {
     if(gameActive) {
-      socket.emit('reset', 'There is an active game');
+      socket.emit('reset', true, 'There is an active game');
       return;
     }
 
     if(user.name.length > 140 || user.question.length > 140) {
-      socket.emit('reset', 'Name/Question too long');
+      socket.emit('reset', true, 'Name/Question too long');
       return;
     }
 
@@ -120,9 +129,10 @@ io.on('connection', socket => {
     lobbyEmit();
   });
 
+  // User is submitting his or her answers to the questions
   socket.on('answers', answers => {
     if(!gameActive) {
-      socket.emit('reset', 'There is an active game');
+      socket.emit('reset', true, 'There is an active game');
       return;
     }
 
@@ -135,16 +145,18 @@ io.on('connection', socket => {
     lobbyEmit();
 
     if(!_.filter(userPool, u => !u.ready && u.name).length) {
-      clearTimeout(readyTimeout);
-      readyTimeout = setTimeout(startGamePhase2, GAME_TIMEOUT);
+      clearTimeout(gameTimeout);
+      gameTimeout = setTimeout(startGamePhase2, GAME_TIMEOUT);
+      scoreEmit();
     } else {
-      clearTimeout(readyTimeout);
+      clearTimeout(gameTimeout);
     }
   });
 
+  // User is ready in lobby
   socket.on('ready', ready => {
     if(gameActive) {
-      socket.emit('reset', 'There is an active game');
+      socket.emit('reset', true, 'There is an active game');
       return;
     }
     
@@ -158,12 +170,13 @@ io.on('connection', socket => {
     }
   });
 
+  // Submitting a guess for answers
   socket.on('guess', guess => {
     let correct = 0;
     let total = Object.keys(answerMap).length;
 
     _.each(guess, (id, guess) => {
-      if(answerMap[guess] == id)
+      if(answerMap[id] == guess)
         correct++;
     });
     user.score = [correct, total];
@@ -175,24 +188,32 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     delete userPool[id];
     io.emit('user-count', Object.keys(userPool).length);
+    lobbyEmit();
+
+    // A member of an active game may have left
     if(gameActive && user.name && user.question) { 
+      inGameEmit(false);
       _.each(userPool, u => {
+        if(u.name && u.question)
+          u.socket.emit('reset', true, user.name + ' left the game');
+
+        clearTimeout(gameTimeout);
         u.ready = false
         u.name = '';
         u.question = '';
       });
-      lobbyEmit();
-      io.emit('reset', user.name + ' left the game');
-      inGameEmit(false);
     } else {
 
-      if(!_.filter(userPool, u => !u.ready && u.name).length) {
-        clearTimeout(readyTimeout);
-        readyTimeout = setTimeout(startGamePhase2, GAME_TIMEOUT);
-      } else {
-        clearTimeout(readyTimeout);
+      // A readied user may have left
+      if(!gameActive) {
+        if(!_.filter(userPool, u => !u.ready && u.name).length) {
+          clearTimeout(readyTimeout);
+          readyTimeout = setTimeout(startGame, GAME_TIMEOUT);
+        } else {
+          clearTimeout(readyTimeout);
+        }
       }
-      
+
     }
   })
 });

@@ -1,5 +1,5 @@
 let socket;
-let isReady = false, inGame = false;
+let isReady = false, inGame = false, isGameActive = false;
 const $ = document.querySelector.bind(document);
 
 // Form handler for initial question and name form
@@ -8,6 +8,9 @@ function submitInit(event) {
     event.preventDefault();
 
   let form = event.target;
+
+  if(isGameActive)
+    return;
 
   socket.emit('init', {
     name: form.name.value,
@@ -91,6 +94,7 @@ function reset(force, message) {
 
 window.addEventListener('load', () => {
   socket = io();
+  reset(true);
 
   // Online counter on the bottom
   socket.on('user-count', count => {
@@ -100,10 +104,11 @@ window.addEventListener('load', () => {
   // Active game on the bottom
   socket.on('game-active', active => {
     $('#gameActive').innerHTML = active ? 'Active' : 'Not Started';
+    isGameActive = active;
   });
 
   // set the view to the default screen
-  socket.on('reset', message => reset(false, message));
+  socket.on('reset', (force, message) => reset(force, message));
 
   socket.on('score', (correct, total) => {
     if(!inGame)
