@@ -17,6 +17,11 @@ function submitInit(event) {
   $('#questionForm').className = 'container hidden';
   $('#lobbyView').className = 'container';
   $('#readyButton').className = '';
+  $('#answerForm').className = 'container hidden';
+  $('#answerView').className = 'container hidden';
+  $('#questionForm').className = 'container hidden';
+  $('#scoreboardView').className = 'container hidden';
+  $('#scoreView').className = 'container hidden';
   isReady = false;
 }
 
@@ -104,6 +109,7 @@ window.addEventListener('load', () => {
     $('#lobbyView').className = 'container hidden';
     $('#answerForm').className = 'container hidden';
     $('#scoreboardView').className = 'container hidden';
+    $('#questionForm').className = 'container hidden';
     $('#answerView').className = 'container';
     $('#numUsers').value = answers.length;
 

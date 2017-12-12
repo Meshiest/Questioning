@@ -24,14 +24,23 @@ function lobbyEmit() {
 }
 
 function scoreEmit() {
-  io.emit('scoreboard', _.map(_.filter(_.values(userPool), u => u.name),
-    u => ({name: u.name, score: u.score})));
+  io.emit('scoreboard',
+    _.map(_.filter(_.values(userPool), u => u.name),
+      u => ({name: u.name, score: u.score}))
+    .sort((a, b) => {
+      if(!a.score && !b.score)
+        return 0;
+      if(a.score && b.score)
+        return b.score[0] - a.score[0];
+      return !a ? 1 : -1;
+    })
+  );
 }
 
 function startGame() {
   gameActive = true;
 
-  let questions = _.uniq(_.map(_.filter(userPool, u => u.name), u => u.question));
+  let questions = _.uniq(_.map(_.filter(userPool, u => u.name && u.question), u => u.question));
   _.each(userPool, user => {
     user.ready = false;
     user.socket.emit('questions', _.shuffle(questions));
@@ -43,7 +52,7 @@ function startGame() {
 let answerMap = {};
 
 function startGamePhase2() {
-  let answers = _.map(userPool, ({answers, id, name}) => ({
+  let answers = _.map(_.filter(userPool, u => u.name && u.question), ({answers, id, name}) => ({
     answers: _.sortBy(answers, ['question']), id, name
   }));
   answers = _.shuffle(answers);
