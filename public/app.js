@@ -1,5 +1,5 @@
 let socket;
-let isReady = false;
+let isReady = false, inGame = false;
 const $ = document.querySelector.bind(document);
 
 // Form handler for initial question and name form
@@ -23,6 +23,7 @@ function submitInit(event) {
   $('#scoreboardView').className = 'container hidden';
   $('#scoreView').className = 'container hidden';
   isReady = false;
+  inGame = true;
 }
 
 // Form handler for answering other user's questions
@@ -75,6 +76,7 @@ function reset() {
   $('#scoreView').className = 'container hidden';
   $('#readyButton').className = '';
   $('#questionInput').value = '';
+  inGame = false;
   toggleReady();
   if(isReady)
     toggleReady();
@@ -92,6 +94,9 @@ window.addEventListener('load', () => {
   socket.on('reset', reset);
 
   socket.on('score', (correct, total) => {
+    if(!inGame)
+      return;
+
     $('#lobbyView').className = 'container hidden';
     $('#answerForm').className = 'container hidden';
     $('#answerView').className = 'container hidden';
@@ -106,6 +111,9 @@ window.addEventListener('load', () => {
   // Called when everyone is done answering questions
   // and players guess who answered what
   socket.on('answers', ({names, answers}) => {
+    if(!inGame)
+      return;
+    
     $('#lobbyView').className = 'container hidden';
     $('#answerForm').className = 'container hidden';
     $('#scoreboardView').className = 'container hidden';
@@ -145,6 +153,9 @@ window.addEventListener('load', () => {
 
   // Called after the user submit answers to the questions
   socket.on('waiting', () => {
+    if(!inGame)
+      return;
+    
     $('#lobbyView').className = 'container';
     $('#readyButton').className = 'hidden';
     $('#answerForm').className = 'container hidden';
@@ -153,6 +164,9 @@ window.addEventListener('load', () => {
   // Called when the after everyone readys up in the lobby
   // each player receives the questions shuffled
   socket.on('questions', questions => {
+    if(!inGame)
+      return;
+    
     $('#questionForm').className = 'container hidden';
     $('#scoreboardView').className = 'container hidden';
     $('#lobbyView').className = 'container';
