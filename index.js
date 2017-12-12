@@ -184,6 +184,15 @@ io.on('connection', socket => {
       lobbyEmit();
       io.emit('reset', user.name + ' left the game');
       inGameEmit(false);
+    } else {
+
+      if(!_.filter(userPool, u => !u.ready && u.name).length) {
+        clearTimeout(readyTimeout);
+        readyTimeout = setTimeout(startGamePhase2, GAME_TIMEOUT);
+      } else {
+        clearTimeout(readyTimeout);
+      }
+      
     }
   })
 });

@@ -68,7 +68,11 @@ function toggleReady(event, noEmit) {
     socket.emit('ready', isReady);
 }
 
-function reset(message) {
+function reset(force, message) {
+  if(!force && inGame)
+    return;
+
+  inGame = false;
   $('#lobbyView').className = 'container hidden';
   $('#answerForm').className = 'container hidden';
   $('#answerView').className = 'container hidden';
@@ -77,7 +81,6 @@ function reset(message) {
   $('#scoreView').className = 'container hidden';
   $('#readyButton').className = '';
   $('#questionInput').value = '';
-  inGame = false;
   toggleReady(0, 1);
   if(isReady)
     toggleReady(0, 1);
@@ -100,7 +103,7 @@ window.addEventListener('load', () => {
   });
 
   // set the view to the default screen
-  socket.on('reset', reset);
+  socket.on('reset', message => reset(false, message));
 
   socket.on('score', (correct, total) => {
     if(!inGame)
@@ -127,6 +130,7 @@ window.addEventListener('load', () => {
     $('#answerForm').className = 'container hidden';
     $('#scoreboardView').className = 'container hidden';
     $('#questionForm').className = 'container hidden';
+    $('#scoreView').className = 'container hidden';
     $('#answerView').className = 'container';
     $('#numUsers').value = answers.length;
 
