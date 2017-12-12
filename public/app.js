@@ -58,13 +58,14 @@ function submitGuess(event) {
 }
 
 // Called when the ready button is pressed
-function toggleReady(event) {
+function toggleReady(event, noEmit) {
   let button = $('#readyButton');
   isReady = !isReady;
   button.innerHTML = isReady ? 'Not Ready' : 'Ready!';
   button.className = isReady ? 'not-ready' : 'ready';
 
-  socket.emit('ready', isReady);
+  if(!noEmit)
+    socket.emit('ready', isReady);
 }
 
 function reset() {
@@ -77,9 +78,9 @@ function reset() {
   $('#readyButton').className = '';
   $('#questionInput').value = '';
   inGame = false;
-  toggleReady();
+  toggleReady(0, 1);
   if(isReady)
-    toggleReady();
+    toggleReady(0, 1);
 }
 
 window.addEventListener('load', () => {
