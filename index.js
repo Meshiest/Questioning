@@ -199,7 +199,6 @@ io.on('connection', socket => {
 
         clearTimeout(gameTimeout);
         u.ready = false
-        u.name = '';
         u.question = '';
       });
     } else {
