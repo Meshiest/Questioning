@@ -7,6 +7,7 @@ const _ = require('lodash');
 
 const PORT = 3000;
 const GAME_TIMEOUT = 3000;
+const END_GAME_TIMEOUT = 10 * 60000; // 10 minutes
 
 app.use(express.static('public'));
 app.get('/', (req, res) => {
@@ -15,7 +16,7 @@ app.get('/', (req, res) => {
 
 let userPool = {};
 let ids = 0;
-let readyTimeout, gameTimeout;
+let readyTimeout, gameTimeout, endGameTimeout;
 let gameActive = false;
 
 function lobbyEmit() {
@@ -26,6 +27,11 @@ function lobbyEmit() {
 function inGameEmit(inGame) {
   gameActive = inGame;
   io.emit('game-active', inGame);
+}
+
+function endGame() {
+  inGameEmit(false);
+  io.emit('reset', true, 'Game Ended by Timeout');
 }
 
 function scoreEmit(socket) {
@@ -44,6 +50,9 @@ function scoreEmit(socket) {
 }
 
 function startGame() {
+  cancel(endGameTimeout);
+  endGameTimeout = setTimeout(endGame, END_GAME_TIMEOUT);
+  
   inGameEmit(true);
 
   let questions = _.uniq(_.map(_.filter(userPool, u => u.name && u.question), u => u.question));
@@ -58,6 +67,9 @@ function startGame() {
 let answerMap = {};
 
 function startGamePhase2() {
+  cancel(endGameTimeout);
+  endGameTimeout = setTimeout(endGame, END_GAME_TIME);
+
   _.each(userPool, u => u.ready = false);
 
   let answers = _.map(_.filter(userPool, u => u.name && u.question), ({answers, id, name}) => ({
@@ -114,7 +126,7 @@ io.on('connection', socket => {
       return;
     }
 
-    if(user.name.length > 140 || user.question.length > 140) {
+    if(user.name.length > 30 || user.question.length > 140) {
       socket.emit('reset', true, 'Name/Question too long');
       return;
     }
@@ -192,15 +204,8 @@ io.on('connection', socket => {
 
     // A member of an active game may have left
     if(gameActive && user.name && user.question) { 
-      inGameEmit(false);
-      _.each(userPool, u => {
-        if(u.name && u.question)
-          u.socket.emit('reset', true, user.name + ' left the game');
-
-        clearTimeout(gameTimeout);
-        u.ready = false
-        u.question = '';
-      });
+      if(!user.answers.length)
+        delete answerMap[user.id];
     } else {
 
       // A readied user may have left

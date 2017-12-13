@@ -43,8 +43,8 @@ input, button {
   border: none;
   font-family: courier;
   font-size: 15px;
-  padding: 4px;
   margin: 4px;
+  padding: 4px;
 }
 
 label {
@@ -60,8 +60,6 @@ input[type="submit"], button {
   box-shadow: 2px 2px #aaa;
 }
 
-input[type="submit"]:focus, input[type="submit"]:focus, button:focus,
-input[type="submit"]:active, input[type="submit"]:active, button:active,
 input[type="submit"]:hover, input[type="submit"]:hover, button:hover {
   background-color: #afa;
 }
@@ -70,15 +68,13 @@ button.not-ready {
   background-color: #fcc;
 }
 
-button.not-ready:focus,
-button.not-ready:active,
 button.not-ready:hover {
   background-color: #faa;
 }
 
 input:focus, button:focus {
-  outline: none;
   border-bottom-color: #aaf;
+  outline: none;
 }
 
 .hidden {
@@ -103,10 +99,10 @@ input:focus, button:focus {
 }
 
 .not-ready .user-ready {
-  display: flex;
   align-items: center;
-  justify-content: center;
   animation: spinny 1s infinite ease-in-out;
+  display: flex;
+  justify-content: center;
 }
 
 @keyframes spinny {
