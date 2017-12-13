@@ -155,7 +155,7 @@ function startGame() {
   let questions = _.uniq(_.map(_.filter(userPool, u => u.name && u.question), u => u.question));
   if(questions.length < 5)
     questions = questions.concat(_.shuffle(QUESTIONS).splice(0, 5 - questions.length));
-  
+
   _.each(userPool, user => {
     user.ready = false;
     user.socket.emit('questions', _.shuffle(questions));
@@ -299,6 +299,7 @@ io.on('connection', socket => {
         correct++;
     });
     user.score = [correct, total];
+    user.ready = false;
 
     socket.emit('score', correct, total);
     scoreEmit();
