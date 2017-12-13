@@ -2,6 +2,14 @@ let socket;
 let isReady = false, inGame = false, isGameActive = false;
 const $ = document.querySelector.bind(document);
 
+function utf8_to_b64(str) {
+  return window.btoa(unescape(encodeURIComponent( str )));
+}
+
+function b64_to_utf8(str) {
+  return decodeURIComponent(escape(window.atob( str )));
+}
+
 // Form handler for initial question and name form
 function submitInit(event) {
   if(event)
@@ -38,7 +46,7 @@ function submitAnswers(event) {
   let questions = [];
   for(let i = 0; i < form.numQuestions.value; i++) {
     questions.push({
-      question: atob(form['question_' + i].value),
+      question: b64_to_utf8(form['question_' + i].value),
       answer: form['answer_' + i].value,
     });
   }
@@ -202,7 +210,7 @@ window.addEventListener('load', () => {
       div.innerHTML = `
         <div class="input-container">
           <label for="answer_${i}">${question}</label>
-          <input type="hidden" name="question_${i}" value="${btoa(question)}">
+          <input type="hidden" name="question_${i}" value="${utf8_to_b64(question)}">
           <input type="text" autocomplete="off" name="answer_${i}" id="answer_${i}" placeholder="Answer" required>
         </div>`;
       list.appendChild(div);
