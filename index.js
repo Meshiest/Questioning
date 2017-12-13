@@ -50,7 +50,7 @@ function scoreEmit(socket) {
 }
 
 function startGame() {
-  cancel(endGameTimeout);
+  clearTimeout(endGameTimeout);
   endGameTimeout = setTimeout(endGame, END_GAME_TIMEOUT);
   
   inGameEmit(true);
@@ -67,8 +67,8 @@ function startGame() {
 let answerMap = {};
 
 function startGamePhase2() {
-  cancel(endGameTimeout);
-  endGameTimeout = setTimeout(endGame, END_GAME_TIME);
+  clearTimeout(endGameTimeout);
+  endGameTimeout = setTimeout(endGame, END_GAME_TIMEOUT);
 
   _.each(userPool, u => u.ready = false);
 
@@ -124,6 +124,13 @@ io.on('connection', socket => {
     if(gameActive) {
       socket.emit('reset', true, 'There is an active game');
       return;
+    }
+
+    for(let id in userPool) {
+      if(userPool[id].name === name && id != user.id) {
+        socket.emit('reset', true, 'Name already in use');
+        return;
+      }
     }
 
     if(user.name.length > 30 || user.question.length > 140) {
@@ -206,6 +213,14 @@ io.on('connection', socket => {
     if(gameActive && user.name && user.question) { 
       if(!user.answers.length)
         delete answerMap[user.id];
+
+      if(!_.filter(userPool, u => !u.ready && u.name).length) {
+        clearTimeout(gameTimeout);
+        gameTimeout = setTimeout(startGamePhase2, GAME_TIMEOUT);
+        scoreEmit();
+      } else {
+        clearTimeout(gameTimeout);
+      }
     } else {
 
       // A readied user may have left
