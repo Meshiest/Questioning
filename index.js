@@ -31,6 +31,7 @@ function inGameEmit(inGame) {
 
 function endGame() {
   inGameEmit(false);
+  _.each(userPool, u => u.ready = false);
   io.emit('reset', true, 'Game Ended by Timeout');
 }
 
