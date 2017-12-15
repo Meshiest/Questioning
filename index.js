@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 
 app.get('/new', (req, res) => {
   res.redirect('/game/' + newGame().id);
-})
+});
 
 app.get('/join', (req, res) => {
   res.sendFile(__dirname + '/public/join.html');
@@ -58,6 +58,9 @@ app.get('/game/:id', (req, res) => {
   }
 });
 
+app.use(function (req, res, next) {
+  res.status(404).sendFile(__dirname + '/public/404.html');
+});
 
 http.listen(process.env.PORT || PORT, () => {
   console.log('Listening on *:', PORT);

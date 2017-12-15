@@ -176,6 +176,7 @@ input:focus, button:focus {
 
 .hint, .question, .error {
   display: block;
+  margin: 4px 0;
   text-align: center;
 }
 
