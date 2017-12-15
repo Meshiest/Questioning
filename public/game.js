@@ -385,6 +385,17 @@ window.addEventListener('load', () => {
       scrollTimeout = setTimeout(() => $("#chatHistory").scrollTop($("#chatHistory")[0].scrollHeight), 5000);
     }
   });
+
+  socket.on('notification', message => {
+    $('#chatHistory').append($('<i class="hint"/>').html(message));
+
+    if(Date.now() - lastScroll > 5000) {
+      $("#chatHistory").scrollTop($("#chatHistory")[0].scrollHeight);
+    } else {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => $("#chatHistory").scrollTop($("#chatHistory")[0].scrollHeight), 5000);
+    }
+  });
 });
 
 window.addEventListener('unload', () => {

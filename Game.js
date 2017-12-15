@@ -178,6 +178,10 @@ module.exports = class Game {
 
       socket.on('disconnect', () => {
         delete this.users[id];
+        
+        if(user.name)
+          this.io.emit('notification', user.name + ' disconnected');
+
         let keys = Object.keys(this.users); 
 
         if(user.leader && keys.length) {
@@ -191,6 +195,7 @@ module.exports = class Game {
             this.leader = newLeader;
             newLeader.socket.emit('leader', true);
             newLeader.leader = true;
+            this.io.emit('notification', newLeader.name + ' is now leader');
             break;
           }
         }
@@ -225,7 +230,7 @@ module.exports = class Game {
           return;
         }
 
-        if(name.length > 30) {
+        if(name.length > 25) {
           socket.emit('invalid-name', 'Name too long');
           return;
         }
@@ -242,9 +247,12 @@ module.exports = class Game {
         user.name = name;
         socket.emit('valid-name', user.name);
 
+        this.io.emit('notification', name + ' connected');
+
         if(!this.leader || !this.users[this.leader.id]) {
           this.leader = user;
           user.leader = true;
+          this.io.emit('notification', user.name + ' is now leader');
           socket.emit('leader', true);
         }
 
@@ -319,6 +327,7 @@ module.exports = class Game {
           }
 
           user.ready = true;
+          this.io.emit('notification', user.name + ' started the game');
           this.getQuestions();
         } else {
           user.ready = !!ready;
