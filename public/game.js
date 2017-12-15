@@ -173,7 +173,7 @@ window.addEventListener('load', () => {
 
   socket.on('invalid-name', message => {
     $('#nameForm form')[0].className = 'form-error';
-    $('#nameForm .error').text(message);
+    $('#nameForm .error').html(message);
   });
 
   socket.on('valid-name', name => {
@@ -186,19 +186,19 @@ window.addEventListener('load', () => {
 
   socket.on('invalid-question', message => {
     $('#questionForm form')[0].className = 'form-error';
-    $('#questionForm .error').text(message);
+    $('#questionForm .error').html(message);
   });
 
   socket.on('valid-question', question => {
     $('#questionForm form')[0].className = '';
     $('#questionForm').addClass('hidden');
-    $('#question').text(question);
+    $('#question').html(question);
     $('#readyButton').attr('disabled', false);
     $('#questionPreview').removeClass('hidden');
   });
 
   socket.on('invalid-ready', message => {
-    $('#readyError').text(message);
+    $('#readyError').html(message);
     $('#readyButton').attr('disabled', false);
   });
 
@@ -210,7 +210,7 @@ window.addEventListener('load', () => {
 
   socket.on('invalid-answers', message => {
     $('#answerForm form')[0].className = 'form-error';
-    $('#answerForm .error').text(message);
+    $('#answerForm .error').html(message);
   });
 
   socket.on('valid-answers', () => {
@@ -371,8 +371,8 @@ window.addEventListener('load', () => {
 
   socket.on('message', (sender, message) => {
     $('#chatHistory').append($('<div class="message ' + (!sender ? 'sent' : '') + '"/>')
-      .append($('<div class="content"/>').html(message))
-      .append($('<div class="author"/>').text(sender || 'You')));
+      .append($('<div class="author"/>').text(sender || 'You'))
+      .append($('<div class="content"/>').html(message)));
     $("#chatHistory").scrollTop($("#chatHistory")[0].scrollHeight);
   });
 });
