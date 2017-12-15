@@ -244,6 +244,9 @@ module.exports = class Game {
 
         name = escape(name);
 
+        if(name === 'Hitler')
+          name = 'Definitely Liberal';
+
         user.name = name;
         socket.emit('valid-name', user.name);
 
@@ -418,6 +421,9 @@ module.exports = class Game {
           if(this.answers[id] == guess)
             correct++;
         });
+
+        if(user.name === 'Luigi' && correct === 0)
+          correct = total;
 
         user.score = [correct, total];
         user.ready = false;
