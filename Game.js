@@ -422,6 +422,21 @@ module.exports = class Game {
         this.lobbyEmit();
       });
 
+      socket.on('message', message => {
+        if(!user.name)
+          return;
+
+        message = _.trim(message);
+
+        if(message.length === 0 || message.length > 100)
+          return;
+
+        message = escape(message);
+
+        socket.broadcast.emit('message', user.name, message);
+        socket.emit('message', false, message);
+      });
+
     });
   }
 };

@@ -26,6 +26,14 @@ function submitQuestion(event) {
   socket.emit('question', form.question.value);
 }
 
+function sendMessage(event) {
+  event.preventDefault();
+
+  let form = event.target;
+  socket.emit('message', form.message.value);
+  form.message.value = "";
+}
+
 // Form handler for answering other user's questions
 function submitAnswers(event) {
   event.preventDefault();
@@ -119,6 +127,7 @@ function resetLobby() {
   $('#scoreboardView').addClass('hidden');
   $('#guessForm').addClass('hidden');
   $('#answerForm').addClass('hidden');
+  $('#chatView').removeClass('hidden');
   setReady(false);
 }
 
@@ -358,6 +367,13 @@ window.addEventListener('load', () => {
           ${score ? score.join('/') : '&#x29D6;'}
         </div>`));
     });
+  });
+
+  socket.on('message', (sender, message) => {
+    $('#chatHistory').append($('<div class="message ' + (!sender ? 'sent' : '') + '"/>')
+      .append($('<div class="content"/>').html(message))
+      .append($('<div class="author"/>').text(sender || 'You')));
+    $("#chatHistory").scrollTop($("#chatHistory")[0].scrollHeight);
   });
 });
 

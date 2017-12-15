@@ -279,3 +279,49 @@ button:disabled {
   opacity: 0.6;
   pointer-events: none;
 }
+
+.chat-history {
+  background-color: #f5f5f5;
+  box-shadow: 2px 2px #aaa;
+  height: 200px;
+  margin: 4px;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+.message {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 1px 1px #aaa;
+  display: flex;
+  flex-direction: column;
+  margin: 4px;
+  max-width: calc(100% - 50px);
+  overflow-wrap: break-word;
+  padding: 4px;
+}
+
+.message .author {
+  align-self: flex-end;
+  color: #444;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.sent {
+  background-color: #c5c5ff;
+  margin-left: auto;
+}
+
+.sent .author {
+  display: none;
+}
+
+.chat-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-form input {
+  margin: 4px;
+}

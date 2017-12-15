@@ -103,5 +103,15 @@
         <div class="centered">...</div>
       </div>
     </div>
+
+    <div class="container hidden" id="chatView">
+      <h3>Chat</h3>
+      <div class="chat-history" id="chatHistory">
+      </div>
+      <form onsubmit="sendMessage(event)" class="chat-form">
+        <input type="text" name="message" required minlength="1" maxlength="100" placeholder="Message">
+        <input type="submit" style="display: none;">
+      </form>
+    </div>
   </body>
 </html>
