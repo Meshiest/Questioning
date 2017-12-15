@@ -145,9 +145,18 @@ input:focus, button:focus {
 .lobby-user {
   align-items: center;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   padding: 2px;
   position: relative;
+}
+
+.user-name {
+  flex: 1;
+}
+
+.best-question {
+  color: #dd2;
+  margin: 0 8px;
 }
 
 .user-ready {
@@ -155,7 +164,7 @@ input:focus, button:focus {
   transition: all 1s;
 }
 
-.not-ready .user-ready {
+.not-ready .user-ready:last-child {
   align-items: center;
   animation: spinny 1s infinite ease-in-out;
   display: flex;
@@ -174,7 +183,7 @@ input:focus, button:focus {
   }
 }
 
-.hint, .question, .error {
+.hint, .question-preview, .error {
   display: block;
   margin: 4px 0;
   text-align: center;
@@ -184,7 +193,7 @@ input:focus, button:focus {
   color: #aaa;
 }
 
-.question {
+.question-preview {
   color: #666;
   margin: 10px 0;
 }
@@ -209,6 +218,32 @@ input:focus, button:focus {
   position: relative;
   position: sticky;
   top: 0;
+}
+
+.question {
+  display: flex;
+}
+
+.question .input-container {
+  flex: 1;
+}
+
+.question .star {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.star-button {
+  color: #dd4;
+  cursor: pointer;
+  font-size: 30px;
+  padding: 3px;
+  transition: all 0.2s;
+}
+
+.star-button:hover {
+  color: #ff6;
 }
 
 .question-pair {

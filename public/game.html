@@ -39,7 +39,7 @@
 
     <div class="container column hidden" id="questionPreview">
       <h3>Your Question</h3>
-      <i class="question" id="question"></i>
+      <i class="question-preview" id="question"></i>
       <button id="editQuestionButton" onclick="showEditQuestion()">Edit Question</button>
     </div>
 
@@ -47,6 +47,7 @@
       <h3>Questions</h3>
       <form onsubmit="submitAnswers(event)">
         <input type="hidden" name="numQuestions" id="numQuestions">
+        <input type="hidden" name="favoriteQuestion" id="favoriteQuestion">
         <div class="question-list" id="questionList">
           <div class="centered">...</div>
         </div>

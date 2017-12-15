@@ -41,7 +41,10 @@ function submitAnswers(event) {
     });
   }
 
-  socket.emit('answers', answers);
+  socket.emit('answers', {
+    answers,
+    favorite: form.favoriteQuestion.value
+  });
 }
 
 // Form handler for guessing which users correspond to answers
@@ -68,14 +71,16 @@ function selectUser(event) {
       $(e).html((usedNames[e.value] ? '&check; ' : '&cross; ') + userMap[e.value]);
   });
 }
-/*
-<select class="names" onchange="selectUser(event)" name="guess_${i}">
-  <option value="">Select a Name</option>
-  ${names.map(({id, name}) => `
-    <option value="${id}">${name}</option>
-  `)}
-</select>
-*/
+
+function voteQuestion(event, id) {
+  $('.star-button').html('&#x2606;');
+  if($('#favoriteQuestion').val() != id) { 
+    $('#favoriteQuestion').val(id);
+    $(event.target).html('&#x2605;');
+  } else {
+    $('#favoriteQuestion').val(-1);
+  }
+}
 
 // Game resets to its initial state
 function hardReset() {
@@ -279,6 +284,7 @@ window.addEventListener('load', () => {
     closeLobby();
 
     $('#numQuestions').val(questions.length);
+    $('#favoriteQuestion').val(-1);
 
     let list = $('#questionList');
     list.empty();
@@ -289,6 +295,9 @@ window.addEventListener('load', () => {
           <label for="answer_${i}">${question}</label>
           <input type="hidden" name="question_${i}" value="${id}">
           <input type="text" maxlength="140" autocomplete="off" name="answer_${i}" id="answer_${i}" placeholder="Answer" required>
+        </div>
+        <div class="star">
+          <span class="star-button" onclick="voteQuestion(event, ${id})">&#x2606;</span>
         </div>
       `));
     });
@@ -309,7 +318,7 @@ window.addEventListener('load', () => {
     list.empty();
 
     answers.forEach(({id, answers}, i) => {
-      list.append($('<div class="question"/>').html(`
+      list.append($('<div/>').html(`
         <div class="user-field">
           <input type="hidden" name="id_${i}" value="${id}">
           <select class="names" onchange="selectUser(event)" name="guess_${i}">
@@ -331,16 +340,19 @@ window.addEventListener('load', () => {
     });
   });
 
-  socket.on('scoreboard', users => {
+  socket.on('scoreboard', (users, best) => {
     let list = $('#scoreList');
     list.empty();
 
-    users.forEach(({name, score}) => {
+    users.forEach(({name, score, id}) => {
       list.append($('<div class="lobby-user"/>')
       .addClass('lobby-user ' + (score ? 'ready' : 'not-ready'))
       .html(`
         <div class="user-name">
           ${name}
+        </div>
+        <div class="user-ready best-question">
+          ${best == id ? '&#x2605;' : ''}
         </div>
         <div class="user-ready">
           ${score ? score.join('/') : '&#x29D6;'}

@@ -51,17 +51,23 @@ module.exports = class Game {
 
   // Tells all players the scores
   scoreEmit() {
+    let questions = this.questions.sort((a, b) => b.votes - a.votes);
+    let bestQuestion = -1;
+    if(questions[0].votes != questions[1].votes)
+      bestQuestion = questions[0].userId;
+
     this.io.emit('scoreboard',
       // Get all selectable users and names
       _.map(_.filter(_.values(this.users), u => typeof this.answers[u.id] !== 'undefined'),
-        u => ({name: u.name, score: u.score}))
+        u => ({name: u.name, score: u.score, id: u.id}))
       .sort((a, b) => { // Put desc scores above waiting
         if(!a.score && !b.score)
           return 0;
         if(a.score && b.score)
           return b.score[0] - a.score[0];
         return !a.score ? 1 : -1;
-      })
+      }),
+      bestQuestion,
     );
   }
 
@@ -76,6 +82,7 @@ module.exports = class Game {
         this.questions.push({
           userId: u.id,
           question: u.question,
+          votes: 0,
         });
         u.question = '';
       }
@@ -235,7 +242,7 @@ module.exports = class Game {
         user.name = name;
         socket.emit('valid-name', user.name);
 
-        if(!this.leader) {
+        if(!this.leader || !this.users[this.leader.id]) {
           this.leader = user;
           user.leader = true;
           socket.emit('leader', true);
@@ -320,7 +327,7 @@ module.exports = class Game {
         }
       });
 
-      socket.on('answers', answers => {
+      socket.on('answers', ({answers, favorite}) => {
         if(!user.inGame) {
           socket.emit('invalid-answers', 'Cannot answer while not in game');
           return;
@@ -372,6 +379,10 @@ module.exports = class Game {
           return;
         }
 
+        if(favorite && favorite >= 0 && favorite <= this.questions.length) {
+          this.questions[favorite].votes ++;
+        }
+
         user.answers = answers;
         user.ready = true;
         socket.emit('valid-answers');
@@ -401,6 +412,7 @@ module.exports = class Game {
 
         user.score = [correct, total];
         user.ready = false;
+        user.answers = false;
         user.inGame = false;
         socket.leave('game');
 
