@@ -242,7 +242,7 @@ window.addEventListener('load', () => {
             ${name}
           </div>
           <div class="user-ready">
-            ${inGame ? '&#2694;' :
+            ${inGame ? '&#x2694;' :
               leader ? '&#9818;' :
               ready ? '&check;' : '&#x29D6;'}
           </div>
