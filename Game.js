@@ -225,6 +225,11 @@ module.exports = class Game {
 
         name = _.trim(name);
 
+        if(name === 'Kieth')
+          name = 'Keith';
+        else if(name === 'Keith')
+          name = 'Kieth';
+
         if(name.length < 1) {
           socket.emit('invalid-name', 'Name too short');
           return;
