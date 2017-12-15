@@ -11,7 +11,7 @@ body {
 .input-container {
   display: flex;
   flex-direction: column;
-  margin: 8px 0;
+  margin: 4px 0;
 }
 
 .container {
@@ -19,7 +19,47 @@ body {
   box-shadow: 2px 2px #aaa;
   margin: 20px auto;
   max-width: 800px;
-  padding: 4px;
+  padding: 8px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.divider-or {
+  color: #888;
+  margin: 8px;
+  position: relative;
+  text-align: center;
+}
+
+.divider-or::before, .divider-or::after {
+  border-top: 1px solid #aaa;
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 30px);
+}
+
+.divider-or::before {
+  left: 10px;
+}
+
+.divider-or::after {
+  right: 10px;
+}
+
+.title {
+  font-size: 30px;
+  margin-top: 20px;
 }
 
 h2, h3 {
@@ -31,7 +71,7 @@ h2, h3 {
 
 @media screen and (max-width: 800px) {
   .container {
-    margin: 5px;
+    margin: 10px;
   }
 
   label {
@@ -47,6 +87,10 @@ input, button {
   padding: 4px;
 }
 
+.large {
+  font-size: 20px;
+}
+
 label {
   margin: 0 4px;
 }
@@ -58,18 +102,31 @@ input[type="text"] {
 input[type="submit"], button {
   background-color: #cfc;
   box-shadow: 2px 2px #aaa;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 input[type="submit"]:hover, input[type="submit"]:hover, button:hover {
   background-color: #afa;
 }
 
-button.not-ready {
+input[type="submit"]:focus, input[type="submit"]:focus, button:focus {
+  background-color: #dfd;
+}
+
+button.not-ready,
+.form-error input[type="submit"] {
   background-color: #fcc;
 }
 
-button.not-ready:hover {
+button.not-ready:hover,
+.form-error input[type="submit"]:hover {
   background-color: #faa;
+}
+
+button.not-ready:focus,
+.form-error input[type="submit"]:focus {
+  background-color: #fdd;
 }
 
 input:focus, button:focus {
@@ -117,10 +174,22 @@ input:focus, button:focus {
   }
 }
 
-.hint {
-  color: #aaa;
+.hint, .question, .error {
   display: block;
   text-align: center;
+}
+
+.hint {
+  color: #aaa;
+}
+
+.question {
+  color: #666;
+  margin: 10px 0;
+}
+
+.error {
+  color: #f99;
 }
 
 .user-field {
@@ -143,23 +212,34 @@ input:focus, button:focus {
 
 .question-pair {
   border-bottom: 1px solid #eee;
-  margin: 4px;
+  margin: 4px 0;
 }
 
 .question-pair .answer {
   font-style: italic;
+  margin: 2px 0;
 }
 
 .score {
   align-items: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   font-size: 50px;
+  justify-content: center;
   text-align: center;
 }
 
 .score .top {
-  min-width: 100px;
   border-bottom: 2px solid #999;
+  min-width: 100px;
+}
+
+.form-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+button:disabled {
+  opacity: 0.6;
+  pointer-events: none;
 }

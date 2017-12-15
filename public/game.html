@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Questioning</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/jquery.min.js"></script>
+    <script src="/jquery.cookie.js"></script>
+    <script src="/game.js"></script>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <h2 class="title">Who Are You?</h2>
+    <div class="container" id="nameForm">
+      <form onsubmit="submitName(event)">
+        <div class="input-container">
+          <label for="nameInput">Enter Your Name</label>
+          <input type="text" autocomplete="off" name="name" id="nameInput" maxlength="30" placeholder="Name" required>
+        </div>
+        <div class="column">
+          <input type="submit" value="Good Enough">
+        </div>
+        <i class="error"></i>
+      </form>
+    </div>
+
+    <div class="container hidden" id="questionForm">
+      <form onsubmit="submitQuestion(event)">
+        <div class="input-container">
+          <label for="questionInput">Enter Your Question</label>
+          <input type="text" autocomplete="off" name="question" id="questionInput" maxlength="30" placeholder="Question?" required>
+        </div>
+        <div class="column">
+          <input type="submit" value="Good Enough">
+        </div>
+        <i class="error"></i>
+      </form>
+    </div>
+
+    <div class="container column hidden" id="questionPreview">
+      <h3>Your Question</h3>
+      <i class="question" id="question"></i>
+      <button id="editQuestionButton" onclick="showEditQuestion()">Edit Question</button>
+    </div>
+
+    <div class="container hidden" id="answerForm">
+      <h3>Questions</h3>
+      <form onsubmit="submitAnswers(event)">
+        <input type="hidden" name="numQuestions" id="numQuestions">
+        <div class="question-list" id="questionList">
+          <div class="centered">...</div>
+        </div>
+
+        <div class="input-container">
+          <input type="submit" value="Good Enough">
+        </div>
+        <i class="error"></i>
+      </form>
+    </div>
+
+    <div class="container hidden" id="guessForm">
+      <h3>Answers</h3>
+      <form onsubmit="submitGuess(event)">
+        <input type="hidden" name="numUsers" id="numUsers">
+
+        <div class="question-list" id="answerList">
+          <div class="centered">...</div>
+        </div>
+
+        <div class="input-container">
+          <input type="submit" value="Good Enough">
+        </div>
+        <i class="error"></i>
+      </form>
+    </div>
+
+    <div class="container" id="userView">
+      <h3>Users</h3>
+      <div class="user-list" id="userList">
+        <div class="centered">...</div>
+      </div>
+      <div class="column">
+        <button onclick="toggleReady(event)" class="hidden" id="readyButton">Ready!</button>
+      </div>
+      <i class="error" id="readyError"></i>
+    </div>
+
+    <div class="container hidden" id="scoreView">
+      <h3>Score</h3>
+      <div class="score">
+        <div class="score-item top" id="scoreCorrect">?</div>
+        <div class="score-item bottom" id="scoreTotal">?</div>
+      </div>
+      <div class="input-container">
+        <button onclick="resetLobby()">Again!</button>
+      </div>
+    </div>
+
+    <div class="container hidden" id="scoreboardView">
+      <h3>Scoreboard</h3>
+      <div class="user-list" id="scoreList">
+        <div class="centered">...</div>
+      </div>
+    </div>
+  </body>
+</html>

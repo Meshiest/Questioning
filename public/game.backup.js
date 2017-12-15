@@ -1,13 +1,23 @@
 let socket;
-let isReady = false, inGame = false, isGameActive = false;
-const $ = document.querySelector.bind(document);
+let isReady = false;
+let inGame = false;
+let isGameActive = false;
+let name;
 
+// TODO Remove these
 function utf8_to_b64(str) {
   return window.btoa(unescape(encodeURIComponent( str )));
 }
 
 function b64_to_utf8(str) {
   return decodeURIComponent(escape(window.atob( str )));
+}
+
+function submitName(event) {
+  let form = event.target;
+  form.className = 'form-loading';
+
+  socket.emit('name', form.name.value);
 }
 
 // Form handler for initial question and name form
@@ -25,14 +35,14 @@ function submitInit(event) {
     question: form.question.value,
   });
 
-  $('#questionForm').className = 'container hidden';
-  $('#lobbyView').className = 'container';
-  $('#readyButton').className = '';
-  $('#answerForm').className = 'container hidden';
-  $('#answerView').className = 'container hidden';
-  $('#questionForm').className = 'container hidden';
-  $('#scoreboardView').className = 'container hidden';
-  $('#scoreView').className = 'container hidden';
+  $('#questionForm')[0].className = 'container hidden';
+  $('#lobbyView')[0].className = 'container';
+  $('#readyButton')[0].className = '';
+  $('#answerForm')[0].className = 'container hidden';
+  $('#answerView')[0].className = 'container hidden';
+  $('#questionForm')[0].className = 'container hidden';
+  $('#scoreboardView')[0].className = 'container hidden';
+  $('#scoreView')[0].className = 'container hidden';
   isReady = false;
   inGame = true;
 }
@@ -70,7 +80,7 @@ function submitGuess(event) {
 
 // Called when the ready button is pressed
 function toggleReady(event, noEmit) {
-  let button = $('#readyButton');
+  let button = $('#readyButton')[0];
   isReady = !isReady;
   button.innerHTML = isReady ? 'Not Ready' : 'Ready!';
   button.className = isReady ? 'not-ready' : 'ready';
@@ -84,14 +94,14 @@ function reset(force, message) {
     return;
 
   inGame = false;
-  $('#lobbyView').className = 'container hidden';
-  $('#answerForm').className = 'container hidden';
-  $('#answerView').className = 'container hidden';
-  $('#scoreboardView').className = 'container hidden';
-  $('#questionForm').className = 'container';
-  $('#scoreView').className = 'container hidden';
-  $('#readyButton').className = '';
-  $('#questionInput').value = '';
+  $('#lobbyView')[0].className = 'container hidden';
+  $('#answerForm')[0].className = 'container hidden';
+  $('#answerView')[0].className = 'container hidden';
+  $('#scoreboardView')[0].className = 'container hidden';
+  $('#questionForm')[0].className = 'container';
+  $('#scoreView')[0].className = 'container hidden';
+  $('#readyButton')[0].className = '';
+  $('#questionInput')[0].value = '';
   toggleReady(0, 1);
   if(isReady)
     toggleReady(0, 1);
@@ -101,17 +111,12 @@ function reset(force, message) {
 }
 
 window.addEventListener('load', () => {
-  socket = io();
+  socket = io('/' + $.cookie('room'));
   reset(true);
-
-  // Online counter on the bottom
-  socket.on('user-count', count => {
-    $('#onlineCount').innerHTML = count;
-  });
 
   // Active game on the bottom
   socket.on('game-active', active => {
-    $('#gameActive').innerHTML = active ? 'Active' : 'Not Started';
+    $('#gameActive')[0].innerHTML = active ? 'Active' : 'Not Started';
     isGameActive = active;
   });
 
@@ -122,15 +127,15 @@ window.addEventListener('load', () => {
     if(!inGame)
       return;
 
-    $('#lobbyView').className = 'container hidden';
-    $('#answerForm').className = 'container hidden';
-    $('#answerView').className = 'container hidden';
-    $('#questionForm').className = 'container hidden';
-    $('#scoreboardView').className = 'container';
-    $('#scoreView').className = 'container';
+    $('#lobbyView')[0].className = 'container hidden';
+    $('#answerForm')[0].className = 'container hidden';
+    $('#answerView')[0].className = 'container hidden';
+    $('#questionForm')[0].className = 'container hidden';
+    $('#scoreboardView')[0].className = 'container';
+    $('#scoreView')[0].className = 'container';
 
-    $('#scoreCorrect').innerHTML = correct;
-    $('#scoreTotal').innerHTML = total;
+    $('#scoreCorrect')[0].innerHTML = correct;
+    $('#scoreTotal')[0].innerHTML = total;
   });
 
   // Called when everyone is done answering questions
@@ -139,15 +144,15 @@ window.addEventListener('load', () => {
     if(!inGame)
       return;
     
-    $('#lobbyView').className = 'container hidden';
-    $('#answerForm').className = 'container hidden';
-    $('#scoreboardView').className = 'container hidden';
-    $('#questionForm').className = 'container hidden';
-    $('#scoreView').className = 'container hidden';
-    $('#answerView').className = 'container';
-    $('#numUsers').value = answers.length;
+    $('#lobbyView')[0].className = 'container hidden';
+    $('#answerForm')[0].className = 'container hidden';
+    $('#scoreboardView')[0].className = 'container hidden';
+    $('#questionForm')[0].className = 'container hidden';
+    $('#scoreView')[0].className = 'container hidden';
+    $('#answerView')[0].className = 'container';
+    $('#numUsers')[0].value = answers.length;
 
-    let list = $('#answerList');
+    let list = $('#answerList')[0];
     while(list.hasChildNodes())
       list.removeChild(list.lastChild);
 
@@ -182,9 +187,9 @@ window.addEventListener('load', () => {
     if(!inGame)
       return;
     
-    $('#lobbyView').className = 'container';
-    $('#readyButton').className = 'hidden';
-    $('#answerForm').className = 'container hidden';
+    $('#lobbyView')[0].className = 'container';
+    $('#readyButton')[0].className = 'hidden';
+    $('#answerForm')[0].className = 'container hidden';
   });
 
   // Called when the after everyone readys up in the lobby
@@ -193,14 +198,14 @@ window.addEventListener('load', () => {
     if(!inGame)
       return;
     
-    $('#questionForm').className = 'container hidden';
-    $('#scoreboardView').className = 'container hidden';
-    $('#lobbyView').className = 'container';
-    $('#readyButton').className = 'hidden';
-    $('#answerForm').className = 'container';
-    $('#numQuestions').value = questions.length;
+    $('#questionForm')[0].className = 'container hidden';
+    $('#scoreboardView')[0].className = 'container hidden';
+    $('#lobbyView')[0].className = 'container';
+    $('#readyButton')[0].className = 'hidden';
+    $('#answerForm')[0].className = 'container';
+    $('#numQuestions')[0].value = questions.length;
 
-    let list = $('#questionList');
+    let list = $('#questionList')[0];
     while(list.hasChildNodes())
       list.removeChild(list.lastChild);
 
@@ -219,7 +224,7 @@ window.addEventListener('load', () => {
 
   // Called everytime ready status is updated
   socket.on('lobby', users => {
-    let list = $('#userList');
+    let list = $('#userList')[0];
 
     while(list.hasChildNodes())
       list.removeChild(list.lastChild);
@@ -240,7 +245,7 @@ window.addEventListener('load', () => {
 
   // Called everytime someone finishes answering
   socket.on('scoreboard', users => {
-    let list = $('#scoreList');
+    let list = $('#scoreList')[0];
 
     while(list.hasChildNodes())
       list.removeChild(list.lastChild);
