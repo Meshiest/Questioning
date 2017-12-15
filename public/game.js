@@ -233,7 +233,6 @@ window.addEventListener('load', () => {
       list.append($('<i class="hint"/>').text('No one here!'));
 
     users.forEach(({name, ready, leader, inGame}) => {
-      let div = document.createElement('div');
       list.append(
         $('<div class="lobby-user"/>')
         .addClass(!leader && !ready && name && !inGame ? 'not-ready' : 'ready')
@@ -260,7 +259,6 @@ window.addEventListener('load', () => {
       list.append($('<i class="hint"/>').text('No one here!'));
 
     users.forEach(({name, ready, leader, inGame}) => {
-      let div = document.createElement('div');
       list.append(
         $('<div class="lobby-user"/>')
         .addClass(!ready ? 'not-ready' : 'ready')
@@ -286,7 +284,6 @@ window.addEventListener('load', () => {
     list.empty();
 
     questions.forEach(({question, id}, i) => {
-      let div = document.createElement('div');
       list.append($('<div class="question"/>').html(`
         <div class="input-container">
           <label for="answer_${i}">${question}</label>
