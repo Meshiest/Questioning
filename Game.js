@@ -240,6 +240,9 @@ module.exports = class Game {
           return;
         }
 
+        if(name === 'Hitler')
+          name = 'Definitely Liberal';
+
         for(let id in this.users) {
           if(this.users[id].name === name && id != user.id) {
             socket.emit('invalid-name', 'Name taken');
@@ -248,9 +251,6 @@ module.exports = class Game {
         }
 
         name = escape(name);
-
-        if(name === 'Hitler')
-          name = 'Definitely Liberal';
 
         user.name = name;
         socket.emit('valid-name', user.name);
