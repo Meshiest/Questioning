@@ -178,7 +178,7 @@ module.exports = class Game {
 
       socket.on('disconnect', () => {
         delete this.users[id];
-        
+
         if(user.name)
           this.io.emit('notification', user.name + ' disconnected');
 
@@ -441,6 +441,11 @@ module.exports = class Game {
           return;
 
         message = escape(message);
+
+        if(user.name === 'Chaz' && message === '!disconnected') {
+          this.io.emit('notification', user.name + ' disconnected');
+          return;
+        }
 
         socket.broadcast.emit('message', user.name, message);
         socket.emit('message', false, message);
