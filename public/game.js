@@ -5,6 +5,7 @@ let isLeader = false;
 let userName;
 let userMap = {};
 let questionMap = {};
+let scrollTimeout, lastScroll = 0;
 
 // Form handler for updating name
 function submitName(event) {
@@ -158,6 +159,10 @@ function setReady(ready) {
   $('#readyButton').addClass(isReady ? 'not-ready' : 'ready');
   $('#readyButton').removeClass(!isReady ? 'not-ready' : 'ready');
 }
+
+$("#chatHistory").on('scroll', () => {
+  lastScroll = Date.now();
+});
 
 window.addEventListener('load', () => {
   socket = io('/' + $.cookie('room'));
@@ -373,7 +378,12 @@ window.addEventListener('load', () => {
     $('#chatHistory').append($('<div class="message ' + (!sender ? 'sent' : '') + '"/>')
       .append($('<div class="author"/>').text(sender || 'You'))
       .append($('<div class="content"/>').html(message)));
-    $("#chatHistory").scrollTop($("#chatHistory")[0].scrollHeight);
+    if(Date.now() - lastScroll > 5000) {
+      $("#chatHistory").scrollTop($("#chatHistory")[0].scrollHeight);
+    } else {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => $("#chatHistory").scrollTop($("#chatHistory")[0].scrollHeight), 5000);
+    }
   });
 });
 

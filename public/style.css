@@ -286,7 +286,8 @@ button:disabled {
   height: 200px;
   margin: 4px;
   max-height: 200px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .message {
